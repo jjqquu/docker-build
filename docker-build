@@ -14,7 +14,7 @@ usage() {
   echo "    build  Build a docker image from this repo and tag it with the git sha and branch"
   echo "    push   Push the built image to the docker registry. \$DOCKER_EMAIL, \$DOCKER_USER, and \$DOCKER_PASS are required"
   echo "    pull   Pull the previously built image from the docker registry. \$DOCKER_EMAIL, \$DOCKER_USER, and \$DOCKER_PASS are required"
-  exit 1
+  exit 2
 }
 
 # Login to repository
