@@ -13,6 +13,7 @@ usage() {
   echo "Commands:"
   echo "    build  Build a docker image from this repo and tag it with the git sha and branch"
   echo "    push   Push the built image to the docker registry. \$DOCKER_EMAIL, \$DOCKER_USER, and \$DOCKER_PASS are required"
+  echo "    pull   Pull the previously built image from the docker registry. \$DOCKER_EMAIL, \$DOCKER_USER, and \$DOCKER_PASS are required"
   exit 1
 }
 
@@ -44,12 +45,30 @@ push() {
   docker push "$repo"
 }
 
+# Pull pulls the built docker image for the branch.
+pull() {
+  declare repo="$1" registry="$2" branch="$CIRCLE_BRANCH"
+
+  if [ -n "$registry" ]; then
+    repo=$registry/$repo
+  fi
+
+  if [ -z "$DOCKER_EMAIL" ] || [ -z "$DOCKER_USER" ] || [ -z "$DOCKER_PASS" ]; then
+    usage
+  fi
+
+  docker login -e "$DOCKER_EMAIL" -u "$DOCKER_USER" -p "$DOCKER_PASS"
+  docker pull "$repo:$branch"
+}
 case "$1" in
   "build")
     build "$REPO"
     ;;
   "push")
     push "$REPO" "$DOCKER_REGISTRY"
+    ;;
+  "pull")
+    pull "$REPO" "$DOCKER_REGISTRY"
     ;;
   *)
     usage
