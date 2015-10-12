@@ -1,4 +1,4 @@
-`docker-build` is a small script for building, tagging and pushing docker images within circle CI. We use this as a way of pre-building Docker images for Tugboat to deploy to Empire.
+`docker-build` is a small script for building, tagging, pushing and pulling docker images within circle CI. We use this as a way of pre-building Docker images for Tugboat to deploy to Empire.
 
 It makes the following assumptions:
 
@@ -38,6 +38,20 @@ $ docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
 $ docker push "$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME"
 ```
 
+**Pulling the latest image for the branch from the docker registry**
+
+```console
+$ docker-build pull
+```
+
+Equivalent to:
+
+```console
+$ docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+$ docker pull
+"$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME:$CIRCLE_BRANCH"
+```
+
 ### Circle CI
 
 To use this script, merge the following in to your `circle.yml`:
@@ -52,7 +66,7 @@ dependencies:
     - curl https://raw.githubusercontent.com/remind101/docker-build/master/docker-build > /home/ubuntu/bin/docker-build
     - chmod +x /home/ubuntu/bin/docker-build
   override:
-    - docker-build build
+    - docker-build pull || docker-build build
 
 deployment:
   hub:
