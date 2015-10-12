@@ -4,6 +4,7 @@ set -e
 
 # The docker repo.
 REPO="$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME"
+CACHE_PREFIX="cache"
 
 # Usage prints the help for this command.
 usage() {
@@ -13,7 +14,7 @@ usage() {
   echo "Commands:"
   echo "    build  Build a docker image from this repo and tag it with the git sha and branch"
   echo "    push   Push the built image to the docker registry. \$DOCKER_EMAIL, \$DOCKER_USER, and \$DOCKER_PASS are required"
-  echo "    pull   Pull the previously built image from the docker registry. \$DOCKER_EMAIL, \$DOCKER_USER, and \$DOCKER_PASS are required"
+  echo "    pull   Pull the cached image from the docker registry. \$DOCKER_EMAIL, \$DOCKER_USER, and \$DOCKER_PASS are required"
   exit 2
 }
 
@@ -33,6 +34,7 @@ build() {
   docker build --no-cache -t "$repo" .
   docker tag "$repo" "${repo}:${sha}"
   docker tag "$repo" "${repo}:${branch}"
+  docker tag "$repo" "${repo}:${CACHE_PREFIX}-${branch}"
   if [ -n "$tag" ]; then
     docker tag "$repo" "${repo}:${tag}"
   fi
@@ -59,7 +61,7 @@ pull() {
   fi
 
   login
-  docker pull "$repo:$branch"
+  docker pull "$repo:${CACHE_PREFIX}-$branch"
 }
 case "$1" in
   "build")
