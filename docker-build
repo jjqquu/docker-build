@@ -17,6 +17,15 @@ usage() {
   exit 1
 }
 
+# Login to repository
+login() {
+  if [ -z "$DOCKER_EMAIL" ] || [ -z "$DOCKER_USER" ] || [ -z "$DOCKER_PASS" ]; then
+    usage
+  fi
+
+  docker login -e "$DOCKER_EMAIL" -u "$DOCKER_USER" -p "$DOCKER_PASS"
+}
+
 # Build builds the docker image and tags it with the git sha and branch.
 build() {
   declare repo="$1" sha="$CIRCLE_SHA1" branch="$CIRCLE_BRANCH"
@@ -37,11 +46,7 @@ push() {
     repo=$registry/$repo
   fi
 
-  if [ -z "$DOCKER_EMAIL" ] || [ -z "$DOCKER_USER" ] || [ -z "$DOCKER_PASS" ]; then
-    usage
-  fi
-
-  docker login -e "$DOCKER_EMAIL" -u "$DOCKER_USER" -p "$DOCKER_PASS"
+  login
   docker push "$repo"
 }
 
@@ -53,11 +58,7 @@ pull() {
     repo=$registry/$repo
   fi
 
-  if [ -z "$DOCKER_EMAIL" ] || [ -z "$DOCKER_USER" ] || [ -z "$DOCKER_PASS" ]; then
-    usage
-  fi
-
-  docker login -e "$DOCKER_EMAIL" -u "$DOCKER_USER" -p "$DOCKER_PASS"
+  login
   docker pull "$repo:$branch"
 }
 case "$1" in
