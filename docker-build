@@ -34,7 +34,7 @@ build() {
   docker build -t "$repo" .
   docker tag "$repo" "${repo}:${sha}"
   docker tag "$repo" "${repo}:${branch}"
-  docker tag "$repo" "${repo}:${CACHE_PREFIX}-${branch}"
+  docker tag -f "$repo" "${repo}:${CACHE_PREFIX}-${branch}"
   if [ -n "$tag" ]; then
     docker tag "$repo" "${repo}:${tag}"
   fi
