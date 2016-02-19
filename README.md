@@ -25,15 +25,15 @@ $ docker tag "$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME" \
   "$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME:$CIRCLE_BRANCH"
 ```
 
-If you can add additional argments to the `docker-build build`:
+You can add additional arguments to the `docker-build build`:
 
 ```console
-$ docker-build build --build-args AWS_ACCESS_KEY_ID=ACDCABBA
+$ docker-build build --build-arg AWS_ACCESS_KEY_ID=ACDCABBA
 ```
 
 Equivalent to:
 ```console
-$ docker build --no-cache --build-args AWS_ACCESS_KEY_ID=ACDCABBA -t "$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME" .
+$ docker build --no-cache --build-arg AWS_ACCESS_KEY_ID=ACDCABBA -t "$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME" .
 ...
 ```
 
