@@ -8,7 +8,7 @@ REPO="$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME"
 # Usage prints the help for this command.
 usage() {
   echo "Usage:"
-  echo "    docker-build command"
+  echo "    docker-build command <docker build args>"
   echo ""
   echo "Commands:"
   echo "    build  Build a docker image from this repo and tag it with the git sha and branch"
@@ -19,8 +19,10 @@ usage() {
 # Build builds the docker image and tags it with the git sha and branch.
 build() {
   declare repo="$1" sha="$CIRCLE_SHA1" branch="$CIRCLE_BRANCH"
+  shift
+  declare args="$@"
   declare tag=`git describe --tags --exact-match $CIRCLE_SHA1 2>/dev/null`
-  docker build --no-cache -t "$repo" .
+  docker build --no-cache "$args" -t "$repo" .
   docker tag "$repo" "${repo}:${sha}"
   docker tag "$repo" "${repo}:${branch}"
   if [ -n "$tag" ]; then
@@ -46,7 +48,8 @@ push() {
 
 case "$1" in
   "build")
-    build "$REPO"
+    shift
+    build "$REPO" "$@"
     ;;
   "push")
     push "$REPO" "$DOCKER_REGISTRY"
