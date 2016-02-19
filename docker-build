@@ -9,7 +9,7 @@ CACHE_PREFIX="cache"
 # Usage prints the help for this command.
 usage() {
   echo "Usage:"
-  echo "    docker-build command"
+  echo "    docker-build command <docker build args>"
   echo ""
   echo "Commands:"
   echo "    build  Build a docker image from this repo and tag it with the git sha and branch"
@@ -30,8 +30,9 @@ login() {
 # Build builds the docker image and tags it with the git sha and branch.
 build() {
   declare repo="$1" sha="$CIRCLE_SHA1" branch="$CIRCLE_BRANCH"
+  shift
   declare tag=`git describe --tags --exact-match $CIRCLE_SHA1 2>/dev/null`
-  docker build -t "$repo" .
+  docker build "$@" -t "$repo" .
   docker tag "$repo" "${repo}:${sha}"
   docker tag "$repo" "${repo}:${branch}"
   docker tag -f "$repo" "${repo}:${CACHE_PREFIX}-${branch}"
@@ -65,7 +66,8 @@ pull() {
 }
 case "$1" in
   "build")
-    build "$REPO"
+    shift
+    build "$REPO" "$@"
     ;;
   "push")
     push "$REPO" "$DOCKER_REGISTRY"
