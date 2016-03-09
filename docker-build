@@ -3,7 +3,7 @@
 set -e
 
 # The docker repo.
-REPO="$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME"
+REPO="${DOCKER_REGISTRY_USERNAME:-$CIRCLE_PROJECT_USERNAME}/${DOCKER_REGISTRY_REPONAME:-$CIRCLE_PROJECT_REPONAME}"
 CACHE_PREFIX="cache"
 
 # Usage prints the help for this command.
@@ -67,13 +67,13 @@ pull() {
 case "$1" in
   "build")
     shift
-    build "${2:-$REPO}" "$@"
+    build "$REPO" "$@"
     ;;
   "push")
-    push "${2:-$REPO}" "$DOCKER_REGISTRY"
+    push "$REPO" "$DOCKER_REGISTRY"
     ;;
   "pull")
-    pull "${2:-$REPO}" "$DOCKER_REGISTRY"
+    pull "$REPO" "$DOCKER_REGISTRY"
     ;;
   *)
     usage
