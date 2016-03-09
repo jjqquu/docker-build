@@ -2,7 +2,7 @@
 
 It makes the following assumptions:
 
-1. Your docker registry repo and GitHub repo are the same (e.g. remind101/acme-inc on GitHub, remind101/acme-inc on Docker registry).
+1. Either your docker registry repo and GitHub repo are the same (e.g. remind101/acme-inc on GitHub, remind101/acme-inc on Docker registry), or you provide the docker registry repo as the first argument to *all* commands.
 2. You want to tag the docker image with the value of the `$CIRLE_SHA1` (git commit sha) and `$CIRCLE_BRANCH` (git branch).
 3. You're docker credentials are provided as `$DOCKER_EMAIL`, `$DOCKER_USER`, `$DOCKER_PASS`
 4. If you're using a different registry than DockerHub then `$DOCKER_REGISTRY` is set. Please see [this blog post][private_registry] on the format of the registry url.
@@ -37,6 +37,19 @@ $ docker build --no-cache --build-arg AWS_ACCESS_KEY_ID=ACDCABBA -t "$CIRCLE_PRO
 ...
 ```
 
+
+You can also manually set the docker registry repo name:
+
+```console
+$ docker-build build sspinc/docker-registry-repo-name
+```
+
+Equivalent to:
+```console
+$ docker build --no-cache -t "sspinc/docker-registry-repo-name" .
+...
+```
+
 **Push the resulting image to docker registry**
 
 ```console
@@ -60,8 +73,7 @@ Equivalent to:
 
 ```console
 $ docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-$ docker pull
-"$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME:$CIRCLE_BRANCH"
+$ docker pull "$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME:$CIRCLE_BRANCH"
 ```
 
 ### Circle CI
