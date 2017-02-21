@@ -53,7 +53,7 @@ push() {
   docker push "$repo"
 }
 
-# Pull pulls the built docker image for the branch.
+# Pull pulls the built docker image for the branch and master.
 pull() {
   declare repo="$1" registry="$2" branch="$CIRCLE_BRANCH"
 
@@ -62,6 +62,7 @@ pull() {
   fi
 
   login
+  docker pull "$repo:master"
   docker pull "$repo:${CACHE_PREFIX}-$branch"
 }
 case "$1" in
